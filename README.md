@@ -1,6 +1,6 @@
 # trilby
 
-## A Fedora post-install utility and guide
+## A Fedora Linux post-install utility and guide
 
 Congratulations on installing Fedora 38! Fedora is an awesome operating system, but it requires a bit of configuration to get the most out of your experience with it. This guide will provide you with essential steps to ensure that your system is up-to-date and optimized for your needs. Follow these instructions carefully to get the full potential out of your Fedora installation.
 
