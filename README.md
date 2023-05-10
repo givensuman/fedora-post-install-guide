@@ -112,7 +112,7 @@ flatpak update
 
 ## 7. (Optional) Install NVIDIA drivers
 
-Only follow these steps if you have an NVIDIA GPU. Also, don't follow these if you have a GPU which has dropped support for newer driver releases, i.e. anything earlier than NVIDIA GT/GTX 600, 700, 800, 900, 1000, 1600 and RTX 2000, 3000 series. Fedora comes preinstalled with NOUVEAU drivers which may or may not work better older GPUs. 
+Only follow these steps if you have an NVIDIA GPU. Also, don't follow these if you have a GPU which has dropped support for newer driver releases, i.e. anything earlier than NVIDIA GT/GTX 600, 700, 800, 900, 1000, 1600 and RTX 2000, 3000 series. Fedora comes preinstalled with NOUVEAU drivers which may or may not work better for older GPUs. 
 
 If you're not sure, you can check out GPU information with the following command:
 
@@ -168,17 +168,6 @@ If you're not sure, you can check out CPU information with the following command
 
 ```bash
 lscpu | grep 'Model name'
-```
-
-<br>
-
-
-## 10. (Optional) Set hostname
-
-Fedora is a bit narcissistic and sets your hostname by default to be `fedora`. You can rename your system with the following command:
-
-```bash
-hostnamectl set-hostname YOUR_HOSTNAME
 ```
 
 <br>
@@ -431,6 +420,17 @@ These are turned off by default. To re-enable minimize and maximize buttons for 
 
 ```bash
 gsettings set org.gnome.desktop.wm.preferences button-layout ":minimize,maximize,close"
+```
+
+<br>
+
+
+## 7. (Optional) Set hostname
+
+Fedora is a bit narcissistic and sets your hostname by default to be `fedora`. You can rename your system with the following command:
+
+```bash
+hostnamectl set-hostname YOUR_HOSTNAME
 ```
 
 <br>
