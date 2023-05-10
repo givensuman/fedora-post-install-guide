@@ -1,3 +1,7 @@
+https://github.com/hmthien050209/fedora-post-install-script
+https://github.com/osiris2600/fedora-setup
+https://itsfoss.com/things-to-do-after-installing-fedora/
+
 # Fedora 38 Post Install Guide
 Things to do after installing Fedora 38
 
