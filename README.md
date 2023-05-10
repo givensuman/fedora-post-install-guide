@@ -1,13 +1,19 @@
-https://github.com/hmthien050209/fedora-post-install-script
-https://github.com/osiris2600/fedora-setup
-https://itsfoss.com/things-to-do-after-installing-fedora/
+# trilby
 
-# Fedora 38 Post Install Guide
-Things to do after installing Fedora 38
+## A Fedora post-install utility and guide
 
-## Faster Updates
-* `sudo nano /etc/dnf/dnf.conf` 
-* Copy and replace the text with the following:
+Congratulations on installing Fedora 38! Fedora is an awesome operating system, but it requires a bit of configuration to get the most out of your experience with it. This guide will provide you with essential steps to ensure that your system is up-to-date and optimized for your needs. Follow these instructions carefully to get the full potential out of your Fedora installation.
+
+<br>
+
+# Basic Fixes
+
+These are highly recommended configuration steps to run right after you finish installing Fedora.
+
+## 1. Faster updates
+
+Replace the configuration in `/etc/dnf/dnf.conf` with the following text:
+
 ```
 [main] 
 gpgcheck=1 
@@ -15,110 +21,184 @@ installonly_limit=3
 clean_requirements_on_remove=True 
 best=False 
 skip_if_unavailable=True 
-fastestmirror=1
+fastestmirror=0
 max_parallel_downloads=10 
 deltarpm=true
 ``` 
-* Note: The `fastestmirror=1` plugin can be counterproductive at times, use it at your own discretion. Set it to `fastestmirror=0` if you are facing bad download speeds. Many users have reported better download speeds with the plugin enables so it is there by default.
+You can easily access this file with the following command:
 
-## RPM Fusion
-* Fedora has disabled the repositories for a lot of free and non-free .rpm packages by default. Follow this if you want to use non-free software like Steam, Discord and some multimedia codecs etc. As a general rule of thumb its advised to do this get access to many mainstream useful programs.
-* `sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm`
-* also while you're at it, install app-stream metadata by
-* `sudo dnf groupupdate core`
-
-## Update 
-* `sudo dnf -y upgrade --refresh`
-* Reboot
-
-## Firmware
-* If your system supports firmware update delivery through lvfs, update your device firmware by:
+```bash
+sudo nano /etc/dnf/dnf.conf
 ```
+
+<br>
+
+## 2. Update your system
+
+Now's a good time to update your Fedora install with the following command:
+
+```bash
+sudo dnf -y update
+
+sudo dnf -y upgrade --refresh
+```
+
+You may need to restart your computer to finish an update. You can do that in the terminal simply with the command `reboot`.
+
+<br>
+
+## 3. Enable RPM Fusion repositories
+
+Fedora has disabled the repositories for a lot of free and non-free .rpm packages by default. Follow this if you want to use non-free software like Steam, Discord and some multimedia codecs. As a general rule of thumb its advised to do this get access to many useful programs.
+
+Enable RPM Fusion repositories with the following command:
+
+```bash
+sudo dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+
+sudo dnf install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+
+sudo dnf groupupdate core
+```
+
+<br>
+
+## 4. Update your firmware
+
+If your system supports firmware update delivery through `lvfs`, update your device firmware with the following command:
+
+```bash
 sudo fwupdmgr get-devices 
 sudo fwupdmgr refresh --force 
 sudo fwupdmgr get-updates 
 sudo fwupdmgr update
 ```
 
-## NVIDIA Drivers
-* Only follow this if you have a NVIDIA gpu. Also, don't follow this if you have a gpu which has dropped support for newer driver releases i.e. anything earlier than nvidia GT/GTX 600, 700, 800, 900, 1000, 1600 and RTX 2000, 3000 series. Fedora comes preinstalled with NOUVEAU drivers which may or may not work better on those older GPUs. This should be followed by Desktop and Laptop users alike.
-* Disable Secure Boot.
-* `sudo dnf update` #To make sure you're on the latest kernel and then reboot.
-* Enable RPM Fusion Nvidia non-free repository in the app store and install from there,
-* or alternatively
-* `sudo dnf install akmod-nvidia`
-* Install this if you use applications that use CUDA i.e. Davinci Resolve, Blender etc.
-* `sudo dnf install xorg-x11-drv-nvidia-cuda`
-* Wait for atleast 5 mins before rebooting, to let the kermel module get built.
-* `modinfo -F version nvidia` #Check if the kernel module is built.
-* Reboot
+<br>
 
-## Battery Life
-* Follow this if you have a Laptop.
-* power-profiles-daemon works great on many systems but in case you're facing sub-optimal battery backup try installing tlp by:
-* `sudo dnf install tlp tlp-rdw`
-* and mask power-profiles-daemon by:
-* `sudo systemctl mask power-profiles-daemon`
-* Also install powertop by:
-* `sudo dnf install powertop`
-* `sudo powertop --auto-tune`
+## 5. Install media codecs
 
-## Media Codecs
-* Install these to get proper multimedia playback.
-````
+You'll need some additional media codecs to get proper multimedia playback. Install them with the following command:
+
+```bash
 sudo dnf groupupdate multimedia --setop="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin
 sudo dnf groupupdate sound-and-video
 sudo dnf install gstreamer1-plugins-{bad-\*,good-\*,base} gstreamer1-plugin-openh264 gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel ffmpeg gstreamer-ffmpeg
 sudo dnf install lame\* --exclude=lame-devel
 sudo dnf group upgrade --with-optional Multimedia
-````
-
-## H/W Video Acceleration
-* Helps decrease load on the CPU when watching videos online by alloting the rendering to the dGPU/iGPU. Quite helpful in increasing battery backup on laptops.
-
-### H/W Video Decoding with VA-API 
-* `sudo dnf install ffmpeg ffmpeg-libs libva libva-utils`
-
-<details>
-<summary>Intel</summary>
- 
-* If you have an intel chipset after installing the packages above., Do:
-* `sudo dnf install intel-media-driver`
-</details>
-
-<details>
-<summary>AMD</summary>No need to do this for intel integrated graphics. Mesa drivers are for AMD graphics, who lost support for h264/h245 in the fedora repositories in f38 due to legal concerns.
- 
-* If you have an AMD chipset, after installing the packages above do:
 ```
+
+<br>
+
+## 6. Update flatpaks
+
+Flatpaks are a type of software package that is designed to run securely and independently of the underlying operating system. On Fedora, flatpaks are managed using the Flatpak package manager. 
+
+It's important to keep your flatpaks up to date, just like any other software, as updates often include important bug fixes, security patches, and new features. You can do so with the following command:
+
+```bash
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak update
+```
+
+<br>
+
+## 7. (Optional) Install NVIDIA drivers
+
+Only follow these steps if you have an NVIDIA GPU. Also, don't follow these if you have a GPU which has dropped support for newer driver releases, i.e. anything earlier than NVIDIA GT/GTX 600, 700, 800, 900, 1000, 1600 and RTX 2000, 3000 series. Fedora comes preinstalled with NOUVEAU drivers which may or may not work better older GPUs. 
+
+If you're not sure, you can check out GPU information with the following command:
+
+```bash
+lspci | grep VGA
+```
+
+If you're still not sure, it's probably best to skip these steps.
+
+- Disable Secure Boot in your BIOS.
+- Update your system with the command `sudo dnf update`
+- Reboot.
+- Run this command: `sudo dnf install akmod-nvidia`
+* Run this command if you use applications that use CUDA, i.e. Davinci Resolve, Blender etc: `sudo dnf install xorg-x11-drv-nvidia-cuda`
+* Wait for atleast 5 mins before rebooting, to let the kermel module finish building. Go grab a snack.
+* Check if the kernel module is built with this command: `modinfo -F version nvidia`
+* Reboot.
+
+<br>
+
+## 8. (Optional) Improve battery life
+
+If you installed Fedora on a laptop, you can improve battery performance with the `tlp` and `powertop` packages. Install and implement them with the following command:
+
+```bash
+sudo dnf install tlp tlp-rdw
+sudo systemctl mask power-profiles-daemon
+sudo dnf install powertop
+sudo powertop --auto-tune
+```
+
+<br>
+
+## 9. (Optional) H/W Video Acceleration
+
+Helps decrease load on the CPU when watching videos online by alloting the rendering to the dGPU/iGPU. Quite helpful in increasing battery life on laptops.
+
+If you have an Intel CPU, run the following command:
+
+```bash
+sudo dnf install ffmpeg ffmpeg-libs libva libva-utils
+sudo dnf install inte-media-driver
+```
+
+If you have an AMD CPU, run the following command:
+
+```bash
+sudo dnf install ffmpeg ffmpeg-libs libva libva-utils
 sudo dnf swap mesa-va-drivers mesa-va-drivers-freeworld
 ```
-</details>
 
-### OpenH264 for Firefox
-* `sudo dnf config-manager --set-enabled fedora-cisco-openh264`
-* `sudo dnf install -y gstreamer1-plugin-openh264 mozilla-openh264`
-* After this enable the OpenH264 Plugin in Firefox's settings.
+If you're not sure, you can check out CPU information with the following command: 
 
-## Update Flatpak
-* `flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo`
-* `flatpak update`
+```bash
+lscpu | grep 'Model name'
+```
 
-## Set Hostname
-* `hostnamectl set-hostname YOUR_HOSTNAME`
+<br>
 
-## Speed Boost
-* Allow you to squeeze out a little bit more performance from your system. Do not follow this if you share services and files through your network or are using fedora in a VM.
-* Install Grub Customizer to implement these tweaks by
-* `sudo dnf install grub-customizer` 
 
-### Disable Mitigations 
-* Increases performance in multithreaded systems. The more core count you have the greater the performance gain. Not advised for host systems on some networks for increased security vulnerabilities, using it on daily driver systems won't fetch any problems. 5-30% performance gain varying upon systems.
-* Add `mitigations=off` in Kernel Parameters under General Settings in Grub Customizer and click save.
+## 10. (Optional) Set hostname
 
-### Zswap (for systems with <16 gigs of RAM)
-* Acts as virtual memory. Useful for sytems with <16 gigs of ram.
-* Add `zswap.enabled=1` in Kernel Parameters under General Settings in Grub Customizer and click save.
+Fedora is a bit narcissistic and sets your hostname by default to be `fedora`. You can rename your system with the following command:
+
+```bash
+hostnamectl set-hostname YOUR_HOSTNAME
+```
+
+<br>
+<br>
+
+# Advanced Fixes
+
+These are optional configuration steps to further enhance your Fedora experience. Recommended for advanced users only.
+
+## 1. GRUB customization
+
+Get a little more performance from your system via `grub-customizer`. Do not follow this if you share services and files through your network, or are using Fedora in a virtual machine.
+
+- Install GRUB customizer with this command: `sudo dnf install grub-customizer`
+- Open the program with the app menu or with this command: `grub-customizer`
+  
+You can increase performance in multithreaded systems by disabling mitigations. Not recommended for host systems on some networks due to increased risk of security vulnerabilities.
+
+- Navigate to the "General Settings" tab and add `mitigations=off` in "Kernel Parameters".
+- Press save. 
+
+If your system has less than 16GB of RAM, you can enable `zswap` to act as virtual memory.
+
+- Navigate to the "General Settings" tab and add `zswap.enabled=1` in "Kernel Parameters".
+- Press save.
+
+<br>
 
 ## Gnome Extensions
 * Don't install these if you are using a different spin of Fedora.
@@ -138,51 +218,11 @@ sudo dnf swap mesa-va-drivers mesa-va-drivers-freeworld
 * [Vitals](https://extensions.gnome.org/extension/1460/vitals/)
 
 ## Apps [Optional]
+
 * Packages for Rar and 7z compressed files support:
  `sudo dnf install -y unzip p7zip p7zip-plugins unrar`
-* These are Some Packages that I use and would recommend:
-```
-Amberol
-Blanket
-Builder
-Brave 
-Blender
-Books 
-DaVinci Resolve
-Discord
-Discord RPC Maker
-Drawing
-Deja Dup Backups
-Endeavour 
-Easyeffects
-Extension Manager
-Flatseal
-Ferdium
-Foliate
-GIMP
-Gnome Tweaks
-Gradience
-Handbrake
-Iotas
-Joplin
-Khronos
-Krita
-Logseq
-Money
-Onlyoffice
-Pcloud
-Pika backup 
-Solanum
-Sound Recorder
-Tangram
-Transmission
-Tube Converter 
-Ulauncher
-Upscaler
-Video Trimmer
-VS Codium
-yt-dlp
-```
+
+* Gnome-Tweaks for GNOME customization: `sudo dnf install -y gnome-tweaks`
 
 ## Theming [Optional]
 
@@ -194,15 +234,12 @@ yt-dlp
 * https://github.com/vinceliuice/Orchis-theme
 * https://github.com/vinceliuice/Graphite-gtk-theme
 
-### Use themes in Flatpaks
-* `sudo flatpak override --filesystem=$HOME/.themes`
-* `sudo flatpak override --env=GTK_THEME=my-theme` 
 
 ### Icon Packs
 * https://github.com/vinceliuice/Tela-icon-theme
 * https://github.com/vinceliuice/Colloid-gtk-theme/tree/main/icon-theme
 
-### Wallpaper
+### Wallpapers
 * https://github.com/manishprivet/dynamic-gnome-wallpapers
 
 ### Firefox Theme
@@ -213,3 +250,15 @@ yt-dlp
 
 ### Grub Theme
 * https://github.com/vinceliuice/grub2-themes
+
+---
+
+## Sources
+
+README forked from [devangshekhawat's guide](https://github.com/devangshekhawat/Fedora-38-Post-Install-Guide).
+
+https://github.com/hmthien050209/fedora-post-install-script
+
+https://github.com/osiris2600/fedora-setup
+
+https://itsfoss.com/things-to-do-after-installing-fedora/
