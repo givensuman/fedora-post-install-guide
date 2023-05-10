@@ -21,14 +21,24 @@ installonly_limit=3
 clean_requirements_on_remove=True 
 best=False 
 skip_if_unavailable=True 
-fastestmirror=0
+fastestmirror=1
 max_parallel_downloads=10 
 deltarpm=true
 ``` 
-You can easily access this file with the following command:
+Note some users experience mixed results when setting `fastestmirror=1`. You can revert it back to `fastestmirror=0` if you find you're experiencing worse-than-expected download speeds, or skip changing it altogether.
+
+You can easily access the `dnf` configuration file with the following command:
 
 ```bash
 sudo nano /etc/dnf/dnf.conf
+```
+
+Alternatively, you can run this command:
+
+```bash
+echo 'fastestmirror=1' | sudo tee -a /etc/dnf/dnf.conf
+echo 'max_parallel_downloads=10' | sudo tee -a /etc/dnf/dnf.conf
+echo 'deltarpm=true' | sudo tee -a /etc/dnf/dnf.conf
 ```
 
 <br>
@@ -39,7 +49,6 @@ Now's a good time to update your Fedora install with the following command:
 
 ```bash
 sudo dnf -y update
-
 sudo dnf -y upgrade --refresh
 ```
 
@@ -55,9 +64,7 @@ Enable RPM Fusion repositories with the following command:
 
 ```bash
 sudo dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
-
 sudo dnf install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
-
 sudo dnf groupupdate core
 ```
 
@@ -141,7 +148,7 @@ sudo powertop --auto-tune
 
 ## 9. (Optional) H/W Video Acceleration
 
-Helps decrease load on the CPU when watching videos online by alloting the rendering to the dGPU/iGPU. Quite helpful in increasing battery life on laptops.
+Helps decrease load on the CPU when watching videos online by alloting the rendering to the dGPU/iGPU. It can be quite helpful in increasing battery life on laptops.
 
 If you have an Intel CPU, run the following command:
 
@@ -193,63 +200,241 @@ You can increase performance in multithreaded systems by disabling mitigations. 
 - Navigate to the "General Settings" tab and add `mitigations=off` in "Kernel Parameters".
 - Press save. 
 
-If your system has less than 16GB of RAM, you can enable `zswap` to act as virtual memory.
+If your system has less than 16GB of RAM, you may want to enable `zswap` to act as virtual memory.
 
 - Navigate to the "General Settings" tab and add `zswap.enabled=1` in "Kernel Parameters".
 - Press save.
 
 <br>
 
-## Gnome Extensions
-* Don't install these if you are using a different spin of Fedora.
-* Pop Shell - `sudo dnf install -y gnome-shell-extension-pop-shell xprop`
-* [GSconnect](https://extensions.gnome.org/extension/1319/gsconnect/) - do `sudo dnf install nautilus-python` for full support.
-* [Gesture Improvements](https://extensions.gnome.org/extension/4245/gesture-improvements/)
+## 2. auto-cpufreq
+
+Laptop users may see some performance improvements after installing the [auto-cpufreq](https://github.com/AdnanHodzic/auto-cpufreq) tool.
+
+```bash
+cd ~/Downloads && git clone https://github.com/AdnanHodzic/auto-cpufreq.git
+chmod +x ./auto-cpufreq/auto-cpufreq-installer
+sudo ./auto-cpufreq/auto-cpufreq-installer
+sudo auto-cpufreq --install
+```
+
+<br>
+
+## 3. Optimize boot time
+
+There are some slow processes that happen during boot. You can get a slightly faster boot time if your trim the fat.
+
+If you have an Intel CPU, run the following command:
+
+```bash
+echo -e "\nGRUB_CMDLINE_LINUX_DEFAULT=\"intel_idle.max_cstate=1 cryptomgr.notests initcall_debug intel_iommu=igfx_off no_timer_check noreplace-smp page_alloc.shuffle=1 rcupdate.rcu_expedited=1 tsc=reliable quiet splash video=SVIDEO-1:d\"" | sudo tee -a /etc/default/grub
+if [ -f "/sys/firmware/efi" ]; 
+then
+    sudo grub2-mkconfig -o /boot/efi/EFI/fedora/grub.cfg
+else
+    sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+fi
+sudo systemctl disable NetworkManager-wait-online.service
+```
+
+If you have an AMD CPU, run the following command:
+
+```bash
+sudo systemctl disable NetworkManager-wait-online.service
+```
+
+## 4. Improve security
+
+Fedora is pretty great at security out of the box. [ChrisTitusTech](https://christitus.com/secure-linux/) has some additional recommendations, though:
+
+```bash
+sudo dnf install ufw fail2ban -y
+sudo systemctl enable --now ufw.service
+sudo systemctl disable --now firewalld.service
+cd ~/Downloads && git clone https://github.com/ChrisTitusTech/secure-linux
+chmod +x ./secure-linux/secure.sh
+sudo ./secure-linux/secure.sh
+```
+
+<br>
+<br>
+
+# GNOME Customization
+
+Fedora uses the GNOME Desktop Environment by default. There are a number of ways to customize GNOME to your liking. Skip this section if you are using a Fedora spin with a different desktop environment.
+
+Note that most of these are not officially supported by GNOME, and alterations may break aspects of your desktop. These breakages won't be hard to fix, just know your mileage may vary.
+
+The full depth to which you can customize the GNOME desktop is outside the scope of this guide. A good source for inspiration is the [/r/unixporn](https://www.reddit.com/r/unixporn/search/?q=%5BGNOME%5D&restrict_sr=1&sr_nsfw=) subreddit.
+
+## 1. GNOME extensions
+
+Extensions extend and build on your desktop's functionality. A useful tool for managing extensions is the [Extension Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager) app. It's available in your app store if you enabled flatpaks following the above steps, or you can manually install the flatpak with this command:
+
+```bash
+flatpak install flathub com.mattjakeman.ExtensionManager
+```
+
+Afterwards, you can access it as the "Extension Manager" app, or by running this command:
+
+```bash
+flatpak run com.mattjakeman.ExtensionManager
+```
+
+Some recommended extensions to try are:
+* Pop Shell - intall with `sudo dnf install -y gnome-shell-extension-pop-shell xprop`
+* [GSconnect](https://extensions.gnome.org/extension/1319/gsconnect/) - run `sudo dnf install nautilus-python` for full support
 * [User Themes](https://extensions.gnome.org/extension/19/user-themes/)
 * [Just Perfection](https://extensions.gnome.org/extension/3843/just-perfection/)
 * [Dash to Dock](https://extensions.gnome.org/extension/307/dash-to-dock/)
-* [Quick Settings Tweaker](https://extensions.gnome.org/extension/5446/quick-settings-tweaker/)
 * [Blur My Shell](https://extensions.gnome.org/extension/3193/blur-my-shell/)
 * [Bluetooth Quick Connect](https://extensions.gnome.org/extension/1401/bluetooth-quick-connect/)
-* [App Indicator Support](https://extensions.gnome.org/extension/615/appindicator-support/)
-* [Clipboard Indicator](https://extensions.gnome.org/extension/779/clipboard-indicator/)
-* [Legacy (GTK3) Theme Scheme Auto Switcher](https://extensions.gnome.org/extension/4998/legacy-gtk3-theme-scheme-auto-switcher/)
-* [Caffeine](https://extensions.gnome.org/extension/517/caffeine/)
-* [Vitals](https://extensions.gnome.org/extension/1460/vitals/)
+* [AppIndicator and KStatusNotifierItem Support](https://extensions.gnome.org/extension/615/appindicator-support/)
+* [TopHat](https://extensions.gnome.org/extension/5219/tophat/)
 
-## Apps [Optional]
+You can find more extensions [here](https://extensions.gnome.org/).
 
-* Packages for Rar and 7z compressed files support:
- `sudo dnf install -y unzip p7zip p7zip-plugins unrar`
+<br>
 
-* Gnome-Tweaks for GNOME customization: `sudo dnf install -y gnome-tweaks`
+## 2. GTK themes
 
-## Theming [Optional]
+Themes are a good way to personalize your desktop. They come in a huge variety of flavors. Some popular and well-maintained options are:
 
-### GTK Themes
-* Don't install these if you are using a different spin of Fedora.
-* https://github.com/lassekongo83/adw-gtk3
-* https://github.com/vinceliuice/Colloid-gtk-theme
-* https://github.com/EliverLara/Nordic
-* https://github.com/vinceliuice/Orchis-theme
-* https://github.com/vinceliuice/Graphite-gtk-theme
+* [Colloid](https://github.com/vinceliuice/Colloid-gtk-theme)
+* [Nordic](https://github.com/EliverLara/Nordic)
+* [Orchis](https://github.com/vinceliuice/Orchis-theme)
+* [Graphite](https://github.com/vinceliuice/Graphite-gtk-theme)
+* [Catppuccin](https://github.com/catppuccin/gtk)
 
+You can find more themes [here](https://www.gnome-look.org/browse?cat=135&ord=rating).
 
-### Icon Packs
-* https://github.com/vinceliuice/Tela-icon-theme
-* https://github.com/vinceliuice/Colloid-gtk-theme/tree/main/icon-theme
+<br>
 
-### Wallpapers
-* https://github.com/manishprivet/dynamic-gnome-wallpapers
+## 3. Icon packs
 
-### Firefox Theme
-* Install Firefox Gnome theme by: `curl -s -o- https://raw.githubusercontent.com/rafaelmardojai/firefox-gnome-theme/master/scripts/install-by-curl.sh | bash`
+Icon packs are used to customize the icon sets used by GNOME. Some popular and well-maintained options are:
 
-### Starship
-* Configure starship to make your terminal look good
+* [Tela](https://github.com/vinceliuice/Tela-circle-icon-theme)
+* [Candy](https://github.com/EliverLara/candy-icons)
+* [Reversal](https://github.com/yeyushengfan258/Reversal-icon-theme)
+* [Papirus](https://git.io/papirus-icon-theme)
+* [WhiteSur](https://github.com/vinceliuice/WhiteSur-icon-theme)
 
-### Grub Theme
-* https://github.com/vinceliuice/grub2-themes
+You can find more icon packs [here](https://www.gnome-look.org/browse?cat=132&ord=rating).
+
+<br>
+
+## 4. GNOME Tweaks
+
+GNOME Tweaks is an application that allows you to easily control these cosmetic alterations. You can install it with this command:
+
+```bash
+sudo dnf install -y gnome-tweaks
+```
+
+Afterwards, you can access it in as the "Tweaks" app, or by running `gnome-tweaks` in your terminal.
+
+<br>
+<br>
+
+# Misc Customization
+
+## 1. Additional installs
+
+Install packages for .rar and .7z compressed files support with this command:
+
+```
+sudo dnf install -y unzip p7zip p7zip-plugins unrar
+```
+
+Developers might want to install these additional tools:
+
+```
+sudo dnf install code gh github-desktop
+```
+
+Install any of the following CLI goofs to impress your friends:
+
+```bash
+sudo dnf install cmatrix asciiquarium aafire
+```
+
+<br>
+
+## 2. Terminal
+
+You can easily modify your gnome-terminal theme using the [Gogh](https://github.com/Gogh-Co/Gogh) CLI tool. Run it with this command:
+
+```
+bash -c "$(wget -qO- https://git.io/vQgMr)"
+```
+
+Note that you need to have set up a profile before Gogh can create one on your behalf. Do so in your terminal's "Preferences" settings page.
+
+If you'd like further customization to your terminal, you might want to check out [Oh-My-Zsh]()! You can install and enable it as your default shell with this command:
+
+```bash
+sudo dnf -y install zsh util-linux-user
+sh -c "$(curl -fsSL $OH_MY_ZSH_URL)"
+chsh -s "$(which zsh)"
+```
+You can then install any Oh-My-Zsh theme you'd like. To install and configure the popular [Starship]() theme, run this command:
+
+```bash
+curl -sS https://starship.rs/install.sh | sh
+echo "eval "$(starship init zsh)"" >> ~/.zshrc
+```
+
+<br>
+
+## 3. Fonts
+
+You might find Fedora missing a number of fonts. You can run this command to install some of the most common ones:
+
+```bash
+sudo dnf install -y jetbrains-mono-fonts-all terminus-fonts terminus-fonts-console google-noto-fonts-common mscore-fonts-all fira-code-fonts
+```
+
+You can also install proprietary [Apple fonts](https://github.com/thelioncape/San-Francisco-family). Run this command to do so:
+
+```bash
+mkdir ~/.fonts && git -C ~/.fonts clone https://github.com/thelioncape/San-Francisco-family
+```
+
+<br>
+
+## 4. Firefox GTK theme
+
+Fedora ships with Firefox by default. To make it look like your other GTK-themed applications, you can use this command:
+
+```bash
+curl -s -o- https://raw.githubusercontent.com/rafaelmardojai/firefox-gnome-theme/master/scripts/install-by-curl.sh | bash
+```
+
+Follow [these instructions](https://github.com/rafaelmardojai/firefox-gnome-theme#uninstalling) for uninstalling this change.
+
+<br>
+
+## 5. Wallpapers
+
+Here are some resources for getting a cool wallpaper:
+
+* [Dynamic GNOME Wallpapers](https://github.com/manishprivet/dynamic-gnome-wallpapers)
+* [Minimalist Wallpapers](https://github.com/DenverCoder1/minimalistic-wallpaper-collection)
+* [Aesthetic Wallpapers](https://github.com/D3Ext/aesthetic-wallpapers)
+
+<br>
+
+## 6. Minimize/Maximize buttons
+
+These are turned off by default. To re-enable minimize and maximize buttons for all of your windows, run this command:
+
+```bash
+gsettings set org.gnome.desktop.wm.preferences button-layout ":minimize,maximize,close"
+```
+
+<br>
+<br>
 
 ---
 
@@ -257,8 +442,8 @@ If your system has less than 16GB of RAM, you can enable `zswap` to act as virtu
 
 README forked from [devangshekhawat's guide](https://github.com/devangshekhawat/Fedora-38-Post-Install-Guide).
 
-https://github.com/hmthien050209/fedora-post-install-script
+[osiris2600's guide](https://github.com/osiris2600/fedora-setup) on Fedora setup
 
-https://github.com/osiris2600/fedora-setup
+[hmthien050209's script](https://github.com/hmthien050209/fedora-post-install-script) on Fedora post-installation
 
-https://itsfoss.com/things-to-do-after-installing-fedora/
+[itsFOSS article](https://itsfoss.com/things-to-do-after-installing-fedora/) on Fedora post-installation
