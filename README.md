@@ -458,7 +458,7 @@ hostnamectl set-hostname YOUR_HOSTNAME
 
 ## Sources
 
-README forked from [devangshekhawat's guide](https://github.com/devangshekhawat/Fedora-38-Post-Install-Guide).
+README forked from [devangshekhawat's guide](https://github.com/devangshekhawat/Fedora-38-Post-Install-Guide)
 
 [osiris2600's guide](https://github.com/osiris2600/fedora-setup) on Fedora setup
 
