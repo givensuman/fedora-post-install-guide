@@ -75,10 +75,12 @@ sudo dnf groupupdate core
 If your system supports firmware update delivery through `lvfs`, update your device firmware with the following command:
 
 ```bash
-sudo fwupdmgr get-devices 
-sudo fwupdmgr refresh --force 
-sudo fwupdmgr get-updates 
-sudo fwupdmgr update
+if [ -x "$(command -v fwupdmgr)" ]; then
+  sudo fwupdmgr get-devices
+  sudo fwupdmgr refresh --force
+  sudo fwupdmgr get-updates
+  sudo fwupdmgr update
+fi
 ```
 
 <br>
