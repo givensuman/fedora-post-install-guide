@@ -13,13 +13,13 @@
 
 Congratulations on installing Fedora 38! Fedora is an awesome operating system, but it requires a bit of configuration to get the most out of your experience with it. This guide will provide you with essential steps to ensure that your system is up-to-date and optimized for your needs. Follow these instructions carefully to get the full potential out of your Fedora installation.
 
-You should really read below to get a sense of the changes that will be made to your system, but if you like what you see there's an automated script for your convenience. Note that items below marked with * are not covered in the script.
+You should really read below to get a sense of the changes that will be made to your system, but if you like what you see there's an automated script for your convenience. Note that items below marked with * are not covered in the script. You're encouraged to parse through the script and comment out anything you don't want changed on your machine.
 
 To run the script, copy and paste the following command:
 
 ```bash
 cd ~/Downloads && git clone https://github.com/givensuman/trilby
-chmod +x ./setup.sh
+cd trilby && chmod +x ./setup.sh
 sudo ./setup.sh
 ```
 

@@ -11,6 +11,7 @@ function print_ascii_art {
     echo "\`.__________\`-_______-'"
     echo ""
     echo "trilby"
+    echo " "
 }
 
 print_ascii_art
@@ -47,7 +48,7 @@ sleep 1
 mkdir ~/.trilby
 
 # Save CPU info to variable
-cpu_info=$(lspcu)
+cpu_info=$(lscpu)
 
 # Update dnf configuration
 echo "[main]
@@ -65,16 +66,16 @@ sudo dnf -y update
 sudo dnf -y upgrade --refresh
 
 # Enable RPM Fusion repositories
-sudo dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
-sudo dnf install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
-sudo dnf groupupdate core
+sudo dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+sudo dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+sudo dnf groupupdate -y core
 
 # Install multimedia codecs
-sudo dnf groupupdate multimedia --setop="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin
-sudo dnf groupupdate sound-and-video
-sudo dnf install gstreamer1-plugins-{bad-\*,good-\*,base} gstreamer1-plugin-openh264 gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel ffmpeg gstreamer-ffmpeg
-sudo dnf install lame\* --exclude=lame-devel
-sudo dnf group upgrade --with-optional Multimedia
+sudo dnf groupupdate -y multimedia --setop="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin
+sudo dnf groupupdate -y sound-and-video
+sudo dnf install -y gstreamer1-plugins-{bad-\*,good-\*,base} gstreamer1-plugin-openh264 gstreamer1-libav --exclude=gstreamer1-plugins-bad-free-devel ffmpeg gstreamer-ffmpeg
+sudo dnf install -y lame\* --exclude=lame-devel
+sudo dnf group upgrade -y --with-optional Multimedia
 
 # Update flatpaks
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
@@ -83,9 +84,9 @@ flatpak update
 if [[ $laptop_input =~ ^[Yy]$ ]]; then
 
     # Install and run TLP and powertop to improve battery life
-    sudo dnf install tlp tlp-rdw
+    sudo dnf install -y tlp tlp-rdw
     sudo systemctl mask power-profiles-daemon
-    sudo dnf install powertop
+    sudo dnf install -y powertop
     sudo powertop --auto-tune
 
     # Install auto-cpufreq for performance improvements
@@ -109,7 +110,7 @@ if [[ $laptop_input =~ ^[Yy]$ ]]; then
 fi
 
 # Improve security
-sudo dnf install ufw fail2ban -y
+sudo dnf install -y ufw fail2ban
 sudo systemctl enable --now ufw.service
 sudo systemctl disable --now firewalld.service
 cd ~/.trilby && git clone https://github.com/ChrisTitusTech/secure-linux
@@ -146,7 +147,7 @@ curl -sS https://starship.rs/install.sh | sh
 echo "eval "$(starship init zsh)"" >> ~/.zshrc
 
 # Install Extension Manager
-flatpak install flathub com.mattjakeman.ExtensionManager
+flatpak install -y flathub com.mattjakeman.ExtensionManager
 
 # Install GNOME Tweaks
 sudo dnf install -y gnome-tweaks
