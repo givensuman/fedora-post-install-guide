@@ -6,7 +6,7 @@ Congratulations on installing Fedora 38! Fedora is an awesome operating system, 
 
 You should really read below to get a sense of the changes that will be made to your system, but if you like what you see there's an automated script for your convenience. Note that items below marked with * are not covered in the script.
 
-To run the script, copy the following command:
+To run the script, copy and paste the following command:
 
 ```bash
 cd ~/Downloads && git clone https://github.com/givensuman/trilby
@@ -160,7 +160,7 @@ sudo powertop --auto-tune
 
 ## 9. H/W Video Acceleration
 
-Helps decrease load on the CPU when watching videos online by alloting the rendering to the dGPU/iGPU. It can be quite helpful in increasing battery life on laptops.
+This can help decrease load on the CPU when watching videos online by alloting the rendering to the dGPU/iGPU. It can be quite helpful in increasing battery life on laptops.
 
 If you have an Intel CPU, run the following command:
 
@@ -244,9 +244,11 @@ If you have an AMD CPU, run the following command:
 sudo systemctl disable NetworkManager-wait-online.service
 ```
 
+<br>
+
 ## 4. Improve security
 
-Fedora is pretty great at security out of the box. [ChrisTitusTech](https://christitus.com/secure-linux/) has some additional recommendations, though:
+Fedora is pretty great at security out of the box. Linux guru [ChrisTitusTech](https://christitus.com/secure-linux/) has some additional recommendations, though:
 
 ```bash
 sudo dnf install ufw fail2ban -y
@@ -371,6 +373,8 @@ bash -c "$(wget -qO- https://git.io/vQgMr)"
 ```
 
 Note that you need to have set up a profile before Gogh can create one on your behalf. Do so in your terminal's "Preferences" settings page.
+
+<br>
 
 ## 3. OhMyZsh
 
