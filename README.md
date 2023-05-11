@@ -425,7 +425,7 @@ gsettings set org.gnome.desktop.wm.preferences button-layout ":minimize,maximize
 <br>
 
 
-## 7. (Optional) Set hostname
+## 7. Set hostname
 
 Fedora is a bit narcissistic and sets your hostname by default to be `fedora`. You can rename your system with the following command:
 
