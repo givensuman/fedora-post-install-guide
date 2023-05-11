@@ -4,6 +4,14 @@
 
 Congratulations on installing Fedora 38! Fedora is an awesome operating system, but it requires a bit of configuration to get the most out of your experience with it. This guide will provide you with essential steps to ensure that your system is up-to-date and optimized for your needs. Follow these instructions carefully to get the full potential out of your Fedora installation.
 
+You should really read below to get a sense of the changes that will be made to your system, but if you like what you see there's an automated script for your convenience. Note that items below marked with * are not covered in the script.
+
+To run the script, copy the following command:
+
+```
+
+```
+
 <br>
 
 # Basic Fixes
@@ -112,7 +120,7 @@ flatpak update
 
 <br>
 
-## 7. (Optional) Install NVIDIA drivers
+## 7. Install NVIDIA drivers*
 
 Only follow these steps if you have an NVIDIA GPU. Also, don't follow these if you have a GPU which has dropped support for newer driver releases, i.e. anything earlier than NVIDIA GT/GTX 600, 700, 800, 900, 1000, 1600 and RTX 2000, 3000 series. Fedora comes preinstalled with NOUVEAU drivers which may or may not work better for older GPUs. 
 
@@ -135,7 +143,7 @@ If you're still not sure, it's probably best to skip these steps.
 
 <br>
 
-## 8. (Optional) Improve battery life
+## 8. Improve battery life
 
 If you installed Fedora on a laptop, you can improve battery performance with the `tlp` and `powertop` packages. Install and implement them with the following command:
 
@@ -148,7 +156,7 @@ sudo powertop --auto-tune
 
 <br>
 
-## 9. (Optional) H/W Video Acceleration
+## 9. H/W Video Acceleration
 
 Helps decrease load on the CPU when watching videos online by alloting the rendering to the dGPU/iGPU. It can be quite helpful in increasing battery life on laptops.
 
@@ -179,7 +187,7 @@ lscpu | grep 'Model name'
 
 These are optional configuration steps to further enhance your Fedora experience. Recommended for advanced users only.
 
-## 1. GRUB customization
+## 1. GRUB customization*
 
 Get a little more performance from your system via `grub-customizer`. Do not follow this if you share services and files through your network, or are using Fedora in a virtual machine.
 
@@ -287,7 +295,7 @@ You can find more extensions [here](https://extensions.gnome.org/).
 
 <br>
 
-## 2. GTK themes
+## 2. GTK themes*
 
 Themes are a good way to personalize your desktop. They come in a huge variety of flavors. Some popular and well-maintained options are:
 
@@ -301,7 +309,7 @@ You can find more themes [here](https://www.gnome-look.org/browse?cat=135&ord=ra
 
 <br>
 
-## 3. Icon packs
+## 3. Icon packs*
 
 Icon packs are used to customize the icon sets used by GNOME. Some popular and well-maintained options are:
 
@@ -330,7 +338,7 @@ Afterwards, you can access it in as the "Tweaks" app, or by running `gnome-tweak
 
 # Misc Customization
 
-## 1. Additional installs
+## 1. Additional installs*
 
 Install packages for .rar and .7z compressed files support with this command:
 
@@ -352,7 +360,7 @@ sudo dnf install cmatrix asciiquarium aafire
 
 <br>
 
-## 2. Terminal
+## 2. Terminal theme*
 
 You can easily modify your gnome-terminal theme using the [Gogh](https://github.com/Gogh-Co/Gogh) CLI tool. Run it with this command:
 
@@ -362,14 +370,16 @@ bash -c "$(wget -qO- https://git.io/vQgMr)"
 
 Note that you need to have set up a profile before Gogh can create one on your behalf. Do so in your terminal's "Preferences" settings page.
 
-If you'd like further customization to your terminal, you might want to check out [Oh-My-Zsh]()! You can install and enable it as your default shell with this command:
+## 3. OhMyZsh
+
+If you'd like further customization to your terminal, you might want to check out [OhMyZsh](https://github.com/ohmyzsh/ohmyzsh)! You can install and enable it as your default shell with this command:
 
 ```bash
 sudo dnf -y install zsh util-linux-user
 sh -c "$(curl -fsSL $OH_MY_ZSH_URL)"
 chsh -s "$(which zsh)"
 ```
-You can then install any Oh-My-Zsh theme you'd like. To install and configure the popular [Starship]() theme, run this command:
+You can then install any OhMyZsh theme you'd like. To install and configure the popular [Starship](https://github.com/starship/starship) theme, run this command:
 
 ```bash
 curl -sS https://starship.rs/install.sh | sh
@@ -378,7 +388,7 @@ echo "eval "$(starship init zsh)"" >> ~/.zshrc
 
 <br>
 
-## 3. Fonts
+## 4. Fonts
 
 You might find Fedora missing a number of fonts. You can run this command to install some of the most common ones:
 
@@ -394,7 +404,7 @@ mkdir ~/.fonts && git -C ~/.fonts clone https://github.com/thelioncape/San-Franc
 
 <br>
 
-## 4. Firefox GTK theme
+## 5. Firefox GTK theme*
 
 Fedora ships with Firefox by default. To make it look like your other GTK-themed applications, you can use this command:
 
@@ -406,7 +416,7 @@ Follow [these instructions](https://github.com/rafaelmardojai/firefox-gnome-them
 
 <br>
 
-## 5. Wallpapers
+## 6. Wallpapers*
 
 Here are some resources for getting a cool wallpaper:
 
@@ -416,7 +426,7 @@ Here are some resources for getting a cool wallpaper:
 
 <br>
 
-## 6. Minimize/Maximize buttons
+## 7. Minimize/Maximize buttons
 
 These are turned off by default. To re-enable minimize and maximize buttons for all of your windows, run this command:
 
@@ -427,7 +437,7 @@ gsettings set org.gnome.desktop.wm.preferences button-layout ":minimize,maximize
 <br>
 
 
-## 7. Set hostname
+## 8. Set hostname
 
 Fedora is a bit narcissistic and sets your hostname by default to be `fedora`. You can rename your system with the following command:
 
