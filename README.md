@@ -8,8 +8,10 @@ You should really read below to get a sense of the changes that will be made to 
 
 To run the script, copy the following command:
 
-```
-
+```bash
+cd ~/Downloads && git clone https://github.com/givensuman/trilby
+chmod +x ./setup.sh
+sudo ./setup.sh
 ```
 
 <br>
